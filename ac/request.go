@@ -133,7 +133,7 @@ func (r *request) Do(result any) error {
 		return err
 	}
 	bodyBytes = fixJson(bodyBytes)
-	fmt.Println(IndentJsonBytes(bodyBytes))
+	//fmt.Println(IndentJsonBytes(bodyBytes))
 	rdata := response{}
 	if result != nil {
 		rdata.Data = result
@@ -164,113 +164,6 @@ func (r response) ErrorCheck() error {
 	}
 	return errors.New("response check failed")
 }
-
-//
-//type acReq struct {
-//	uri    string
-//	method string
-//	Query  map[string]string
-//	Data   map[string]interface{}
-//}
-//
-//type acResp struct {
-//	Code    int         `json:"code"`
-//	Message string      `json:"message"`
-//	Data    interface{} `json:"data"`
-//}
-//
-//func (ac *AC) send(req *acReq) ([]byte, error) {
-//	var (
-//		dataBytes   []byte
-//		err         error
-//		random, key = ac.setRandomKey()
-//	)
-//	if req.Query != nil && len(req.Query) > 0 {
-//		if strings.Index(req.uri, "?") == -1 {
-//			req.uri += "?"
-//		} else {
-//			req.uri += "&"
-//		}
-//		var qlist []string
-//		for k, v := range req.Query {
-//			qlist = append(qlist, fmt.Sprintf("%s=%s", k, v))
-//		}
-//		req.uri += strings.Join(qlist, "&")
-//	}
-//
-//	if strings.ToUpper(req.method) == "GET" {
-//		if strings.Index(req.uri, "?") == -1 {
-//			req.uri += "?"
-//		} else {
-//			req.uri += "&"
-//		}
-//		queryList := []string{
-//			fmt.Sprintf("%s=%s", "random", random),
-//			fmt.Sprintf("%s=%s", "md5", key),
-//		}
-//		req.uri += strings.Join(queryList, "&")
-//	}
-//
-//	if strings.ToUpper(req.method) == "POST" {
-//		if req.Data == nil {
-//			req.Data = make(map[string]interface{})
-//		}
-//		req.Data["random"] = random
-//		req.Data["md5"] = key
-//		dataBytes, err = json.Marshal(req.Data)
-//		if err != nil {
-//			return nil, err
-//		}
-//	}
-//
-//	httpReq, err := http.NewRequest(req.method, req.uri, bytes.NewBuffer(dataBytes))
-//	if err != nil {
-//		return nil, err
-//	}
-//	if ac.errLangCN {
-//		httpReq.Header.Set("Accept-Language", "zh-CN")
-//	}
-//	httpReq.Header.Set("Content-Type", "application/json")
-//	client := &http.Client{Timeout: 20 * time.Second}
-//	resp, err := client.Do(httpReq)
-//	if err != nil {
-//		return nil, err
-//	}
-//	defer resp.Body.Close()
-//	body, err := io.ReadAll(resp.Body)
-//	if err != nil {
-//		return nil, err
-//	}
-//	if len(body) == 0 {
-//		return nil, errors.New("response nil")
-//	}
-//	return body, nil
-//}
-//
-//func (ac *AC) setRandomKey() (string, string) {
-//	random := rand.New(rand.NewSource(time.Now().Unix()))
-//	var (
-//		md5Handler = md5.New()
-//		rd         = fmt.Sprint(random.Uint64())
-//		sec        = ac.secret + rd
-//	)
-//
-//	io.WriteString(md5Handler, sec)
-//	return rd, fmt.Sprintf("%x", md5Handler.Sum(nil))
-//}
-//
-//func acTransJsonMap(src interface{}) (map[string]interface{}, error) {
-//	var r = make(map[string]interface{})
-//	bingJ, err := json.Marshal(src)
-//	if err != nil {
-//		return nil, err
-//	}
-//	err = json.Unmarshal(bingJ, &r)
-//	if err != nil {
-//		return nil, err
-//	}
-//	return r, nil
-//}
 
 // fixJson 深信服AC的api接口中很多类型是字符串数组的空值[],但是返回为{},导致json解析失败
 // 此方法临时做替换修复该问题
