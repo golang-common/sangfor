@@ -1,6 +1,8 @@
 package ac
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestAddGroup(t *testing.T) {
 	err := AClient.Group().Add(Group{

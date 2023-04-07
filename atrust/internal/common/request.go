@@ -1,4 +1,4 @@
-package atrust
+package common
 
 import (
 	"bytes"
@@ -17,50 +17,50 @@ import (
 	"time"
 )
 
-type request struct {
-	target    string
-	method    string
-	appid     string
-	secret    string
-	uuid      string
-	timestamp string
-	path      string
-	query     url.Values
-	body      []byte
+type Request struct {
+	Target    string
+	Method    string
+	Appid     string
+	Secret    string
+	Uuid      string
+	Timestamp string
+	Path      string
+	Query     url.Values
+	Body      []byte
 }
 
-func (r *request) AddQuery(key, val string) *request {
-	r.query.Set(key, val)
+func (r *Request) AddQuery(key, val string) *Request {
+	r.Query.Set(key, val)
 	return r
 }
 
-func (r *request) SetBody(data any) *request {
+func (r *Request) SetBody(data any) *Request {
 	if data != nil {
 		if b, err := json.Marshal(data); err == nil {
-			r.body = b
+			r.Body = b
 		}
 	}
 	return r
 }
 
-func (r *request) AddQueryData(data any) error {
+func (r *Request) AddQueryData(data any) error {
 	q, err := query.Values(data)
 	if err != nil {
 		return err
 	}
-	r.query = q
+	r.Query = q
 	return nil
 }
 
-func (r *request) Do() (RespData, error) {
+func (r *Request) Do() (RespData, error) {
 	u := &url.URL{
 		Scheme:   "https",
-		Host:     r.target,
-		Path:     r.path,
-		RawQuery: r.query.Encode(),
+		Host:     r.Target,
+		Path:     r.Path,
+		RawQuery: r.Query.Encode(),
 	}
 	// 构建 http 请求
-	req, err := http.NewRequest(r.method, u.String(), bytes.NewReader(r.body))
+	req, err := http.NewRequest(r.Method, u.String(), bytes.NewReader(r.Body))
 	if err != nil {
 		return nil, err
 	}
@@ -79,6 +79,7 @@ func (r *request) Do() (RespData, error) {
 	client.Timeout = 20 * time.Second
 	client.Transport = tsp
 	// 发起请求
+	fmt.Println(req.Header)
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -104,60 +105,77 @@ func (r *request) Do() (RespData, error) {
 	return res.Data, nil
 }
 
-func (r *request) addAuthHeader(h *http.Header) {
-	h.Set("X-Ca-Key", r.appid)
-	h.Set("X-Ca-Timestamp", r.timestamp)
-	h.Set("X-Ca-Nonce", r.uuid)
+func (r *Request) addAuthHeader(h *http.Header) {
+	h.Set("X-Ca-Key", r.Appid)
+	h.Set("X-Ca-Timestamp", r.Timestamp)
+	h.Set("X-Ca-Nonce", r.Uuid)
 	sign := r.sign()
 	h.Set("X-Ca-Sign", sign)
 	h.Set("Content-Type", "application/json")
 }
 
-func (r *request) sign() string {
+func (r *Request) sign() string {
 	key := r.getSignKey()
 	val := r.getSignValue()
-	fmt.Printf("sign_key=\n%s\n", key)
-	fmt.Printf("sign_value=\n%s\n", val)
 	return r.signHmacSha256(key, val)
 }
 
 // getSignKey 获取hmac-sha256的签名key
-func (r *request) getSignKey() string {
+func (r *Request) getSignKey() string {
 	var ul []string
-	ul = append(ul, fmt.Sprintf("%s=%s", "appId", r.appid))
-	ul = append(ul, fmt.Sprintf("%s=%s", "appSecret", r.secret))
-	ul = append(ul, fmt.Sprintf("%s=%s", "timestamp", r.timestamp))
-	ul = append(ul, fmt.Sprintf("%s=%s", "nonce", r.uuid))
+	ul = append(ul, fmt.Sprintf("%s=%s", "appId", r.Appid))
+	ul = append(ul, fmt.Sprintf("%s=%s", "appSecret", r.Secret))
+	ul = append(ul, fmt.Sprintf("%s=%s", "timestamp", r.Timestamp))
+	ul = append(ul, fmt.Sprintf("%s=%s", "nonce", r.Uuid))
 	key := strings.Join(ul, "&")
 	return key
 }
 
-func (r *request) getSignValue() string {
+func (r *Request) getSignValue() string {
 	var queryString, bodyString string
-	if len(r.query) > 0 {
-		queryString = r.query.Encode()
+	if len(r.Query) > 0 {
+		queryString = r.Query.Encode()
 	}
-	if len(r.body) > 0 {
-		bodyString = string(r.body)
+	if len(r.Body) > 0 {
+		bodyString = string(r.Body)
 	}
 	if queryString != "" && bodyString == "" {
-		return fmt.Sprintf("/%s?%s", r.path, queryString)
+		return fmt.Sprintf("/%s?%s", r.Path, queryString)
 	}
 	if queryString == "" && bodyString != "" {
-		return fmt.Sprintf("/%s?%s", r.path, bodyString)
+		return fmt.Sprintf("/%s?%s", r.Path, bodyString)
 	}
 	if queryString != "" && bodyString != "" {
-		return fmt.Sprintf("/%s?%s&%s", r.path, queryString, bodyString)
+		return fmt.Sprintf("/%s?%s&%s", r.Path, queryString, bodyString)
 	}
-	return "/" + r.path
+	return "/" + r.Path
 }
 
 // signHmacSha256
-func (r *request) signHmacSha256(secret, msg string) string {
+func (r *Request) signHmacSha256(secret, msg string) string {
 	key := []byte(secret)
 	h := hmac.New(sha256.New, key)
 	h.Write([]byte(msg))
 	sum := h.Sum(nil)
 	sha := hex.EncodeToString(sum)
 	return sha
+}
+
+// IndentJson 将对象转换为更适合阅读的json格式
+// 通常在调试程序时使用
+func IndentJson(obj interface{}) string {
+	ret, err := json.MarshalIndent(obj, "", "\t")
+	if err != nil {
+		return err.Error()
+	}
+	return string(ret)
+}
+
+func IndentJsonBytes(b []byte) string {
+	var a = make(map[string]any)
+	err := json.Unmarshal(b, &a)
+	if err != nil {
+		return string(b)
+	}
+	return IndentJson(a)
 }

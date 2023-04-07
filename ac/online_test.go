@@ -1,6 +1,8 @@
 package ac
 
-import "testing"
+import (
+	"testing"
+)
 
 var ou = OnlineUser{
 	Name:       "dpytest2",

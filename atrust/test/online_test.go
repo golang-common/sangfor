@@ -1,13 +1,16 @@
-package atrust
+package test
 
-import "testing"
+import (
+	"github.com/golang-common/sangfor/atrust/internal/model"
+	"testing"
+)
 
 func TestOnlineService_Search(t *testing.T) {
-	var search = OnlineUserSearch{
-		PageSize:    50,
+	var search = model.OnlineUserSearch{
+		PageSize:    10,
 		PageIndex:   1,
 		Filter:      "name",
-		SearchValue: "XuYong",
+		SearchValue: "wangbinbin",
 	}
 	ol, pg, err := AClient.Online().Search(search)
 	if err != nil {

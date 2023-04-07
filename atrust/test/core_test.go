@@ -1,27 +1,34 @@
-package atrust
+package test
 
 import (
 	"encoding/json"
+	"github.com/golang-common/sangfor/atrust"
 	"testing"
 	"time"
 )
 
-var AClient = NewAtrust("10.9.255.2:4433",
+var AClient = atrust.NewAtrust("10.9.255.2:4433",
 	"1461600",
 	"6023d77f29144216bcac2496208872c8")
 
-//
-//func TestRequest_Do(t *testing.T) {
-//	at := NewAtrust("10.9.255.2:4433", "1461600", "6023d77f29144216bcac2496208872c8")
-//	err := at.request(http.MethodGet, "monitor/getUserStatus").
-//		AddQuery("pageSize", "20").
-//		AddQuery("pageIndex", "1").
-//		Do(nil)
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//	t.Log("success")
-//}
+// IndentJson 将对象转换为更适合阅读的json格式
+// 通常在调试程序时使用
+func IndentJson(obj interface{}) string {
+	ret, err := json.MarshalIndent(obj, "", "\t")
+	if err != nil {
+		return err.Error()
+	}
+	return string(ret)
+}
+
+func IndentJsonBytes(b []byte) string {
+	var a = make(map[string]any)
+	err := json.Unmarshal(b, &a)
+	if err != nil {
+		return string(b)
+	}
+	return IndentJson(a)
+}
 
 func TestTime(t *testing.T) {
 	cl, err := time.LoadLocation("Asia/Shanghai")
