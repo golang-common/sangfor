@@ -6,14 +6,15 @@ import (
 )
 
 func TestLocalGroupSearch(t *testing.T) {
-	var search = model.Search{
+	var search = model.EntityQuery{
 		UserDirectoryId: "1",
 		PageSize:        4,
 		PageIndex:       1,
 	}
-	g, err := AClient.LocalGroup().Search(search)
+	g, p, err := AClient.Group().Search(search)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Logf("%+v", g)
+	t.Log(p)
 }
