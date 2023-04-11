@@ -9,29 +9,13 @@ import (
 	"time"
 )
 
-type Atrust struct {
+type Service struct {
 	Target string
 	Appid  string
 	Secret string
 }
 
-//func (a Atrust) Online() OnlineServ {
-//	return OnlineServ{a}
-//}
-
-func (a Atrust) User() UserServ {
-	return UserServ{a}
-}
-
-func (a Atrust) Group() GroupServ {
-	return GroupServ{a}
-}
-
-func (a Atrust) Role() RoleServ {
-	return RoleServ{a}
-}
-
-func (a Atrust) request(method, p string) *common.Request {
+func (a Service) request(method, p string) *common.Request {
 	t := time.Now().UTC()
 	return &common.Request{
 		Target:    a.Target,

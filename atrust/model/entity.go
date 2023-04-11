@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // EntityQuery 搜索参数
@@ -45,7 +44,6 @@ func (u EntityQuery) MarshalJSON() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(r))
 	return r, nil
 }
 

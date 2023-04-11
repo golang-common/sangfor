@@ -13,6 +13,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"sort"
 	"strings"
 	"time"
 )
@@ -79,7 +80,6 @@ func (r *Request) Do() (RespData, error) {
 	client.Timeout = 20 * time.Second
 	client.Transport = tsp
 	// 发起请求
-	fmt.Println(req.Header)
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -101,7 +101,6 @@ func (r *Request) Do() (RespData, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(IndentJsonBytes(res.Data))
 	return res.Data, nil
 }
 
@@ -134,7 +133,7 @@ func (r *Request) getSignKey() string {
 func (r *Request) getSignValue() string {
 	var queryString, bodyString string
 	if len(r.Query) > 0 {
-		queryString = r.Query.Encode()
+		queryString = r.parseQueryString(r.Query)
 	}
 	if len(r.Body) > 0 {
 		bodyString = string(r.Body)
@@ -149,6 +148,27 @@ func (r *Request) getSignValue() string {
 		return fmt.Sprintf("/%s?%s&%s", r.Path, queryString, bodyString)
 	}
 	return "/" + r.Path
+}
+
+func (r *Request) parseQueryString(v url.Values) string {
+	var buf strings.Builder
+	keys := make([]string, 0, len(v))
+	for k := range v {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		vs := v[k]
+		for _, v := range vs {
+			if buf.Len() > 0 {
+				buf.WriteByte('&')
+			}
+			buf.WriteString(k)
+			buf.WriteByte('=')
+			buf.WriteString(v)
+		}
+	}
+	return buf.String()
 }
 
 // signHmacSha256

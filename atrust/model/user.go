@@ -48,6 +48,8 @@ type UserAdd struct {
 
 type LocalUserUpdate struct {
 	UserUpdate
+	Id       string `json:"id,omitempty"`
+	Name     string `json:"name,omitempty"`
 	GroupId  string `json:"groupId,omitempty"`
 	PwdModel string `json:"pwdModel,omitempty"`
 	Password string `json:"password,omitempty"`
@@ -55,9 +57,10 @@ type LocalUserUpdate struct {
 
 type ExtUserUpdate struct {
 	UserUpdate
-	Ext               UserExternal `json:"ext,omitempty"`
+	Id                string       `json:"id,omitempty"`
 	UserDirectoryId   string       `json:"userDirectoryId,omitempty"`
 	UserDirectoryName string       `json:"userDirectoryName,omitempty"`
+	Ext               UserExternal `json:"ext,omitempty"`
 }
 
 type ExtUserBatchUpdate struct {

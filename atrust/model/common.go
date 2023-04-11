@@ -48,6 +48,7 @@ type EditRole struct {
 // Resource 应用
 // AccessModel - 访问模式，WEB/L3VPN/TP-WEB
 // SubModel - 子访问模式, WEB/L3VPN/TP-WEB
+// DataType - group / resource 应用组/应用
 // Status - 启用状态，0禁用，1启用
 // GroupId - 所属应用分类ID
 // GroupName - 所属应用分类名称
@@ -64,6 +65,7 @@ type Resource struct {
 	Id              string       `json:"id,omitempty"`
 	Name            string       `json:"name,omitempty"`
 	Description     string       `json:"description,omitempty"`
+	DataType        string       `json:"dataType,omitempty"`
 	AccessModel     string       `json:"accessModel,omitempty"`
 	SubModel        string       `json:"subModel,omitempty"`
 	Status          int          `json:"status,omitempty"`

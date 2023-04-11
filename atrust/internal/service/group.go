@@ -5,16 +5,16 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-common/sangfor/atrust/internal/common"
-	"github.com/golang-common/sangfor/atrust/internal/model"
+	model2 "github.com/golang-common/sangfor/atrust/model"
 	"net/http"
 )
 
 type GroupServ struct {
-	Atrust
+	Service
 }
 
 // Search 搜索
-func (d GroupServ) Search(search model.EntityQuery) ([]model.GroupEntity, common.Pager, error) {
+func (d GroupServ) Search(search model2.EntityQuery) ([]model2.GroupEntity, common.Pager, error) {
 	search.Type = "group"
 	req := d.request(http.MethodPost, "v1/directory/queryEntity")
 	req.SetBody(search)
@@ -22,7 +22,7 @@ func (d GroupServ) Search(search model.EntityQuery) ([]model.GroupEntity, common
 	if err != nil {
 		return nil, common.Pager{}, err
 	}
-	var rst []model.GroupEntity
+	var rst []model2.GroupEntity
 	err = resp.Into("group")
 	if err != nil {
 		return nil, common.Pager{}, err
@@ -34,7 +34,7 @@ func (d GroupServ) Search(search model.EntityQuery) ([]model.GroupEntity, common
 	return rst, pager, nil
 }
 
-func (d GroupServ) AddLocal(mut model.LocalGroupAdd) error {
+func (d GroupServ) AddLocal(mut model2.LocalGroupAdd) error {
 	req := d.request(http.MethodPost, "v2/localUserGroup/createGroup")
 	req.SetBody(mut)
 	_, err := req.Do()
@@ -44,7 +44,7 @@ func (d GroupServ) AddLocal(mut model.LocalGroupAdd) error {
 	return nil
 }
 
-func (d GroupServ) AddExternal(mut model.ExtGroupAdd) error {
+func (d GroupServ) AddExternal(mut model2.ExtGroupAdd) error {
 	req := d.request(http.MethodPost, "v2/externalUserGroup/create")
 	req.SetBody(mut)
 	_, err := req.Do()
@@ -54,7 +54,7 @@ func (d GroupServ) AddExternal(mut model.ExtGroupAdd) error {
 	return nil
 }
 
-func (d GroupServ) UpdateLocal(upd model.LocalGroupUpdate) error {
+func (d GroupServ) UpdateLocal(upd model2.LocalGroupUpdate) error {
 	req := d.request(http.MethodPost, "v2/localUserGroup/updateGroup")
 	req.SetBody(upd)
 	_, err := req.Do()
@@ -64,7 +64,7 @@ func (d GroupServ) UpdateLocal(upd model.LocalGroupUpdate) error {
 	return nil
 }
 
-func (d GroupServ) UpdateExternal(update model.ExtGroupUpdate) error {
+func (d GroupServ) UpdateExternal(update model2.ExtGroupUpdate) error {
 	req := d.request(http.MethodPost, "v2/externalUserGroup/update")
 	req.SetBody(update)
 	_, err := req.Do()
@@ -84,81 +84,81 @@ func (d GroupServ) DeleteLocal(idlist ...string) error {
 	return nil
 }
 
-func (d GroupServ) GetLocalDetail(id string) (model.LocalGroupDetail, error) {
+func (d GroupServ) GetLocalDetail(id string) (model2.LocalGroupDetail, error) {
 	req := d.request(http.MethodGet, "v2/localUserGroup/queryGroup")
 	req.AddQuery("id", id)
 	resp, err := req.Do()
 	if err != nil {
-		return model.LocalGroupDetail{}, err
+		return model2.LocalGroupDetail{}, err
 	}
-	var rst []model.LocalGroupDetail
+	var rst []model2.LocalGroupDetail
 	err = resp.ParseData("data", &rst)
 	if err != nil {
-		return model.LocalGroupDetail{}, err
+		return model2.LocalGroupDetail{}, err
 	}
 	if len(rst) == 0 {
-		return model.LocalGroupDetail{}, errors.New("not found")
+		return model2.LocalGroupDetail{}, errors.New("not found")
 	}
 	return rst[0], nil
 }
 
-func (d GroupServ) GetExtDetail(arg model.CommonArg) (model.ExtGroupDetail, error) {
+func (d GroupServ) GetExtDetail(arg model2.CommonArg) (model2.ExtGroupDetail, error) {
 	req := d.request(http.MethodGet, "v2/externalUserGroup/queryAndGetAuthCompose")
 	req.AddQueryData(arg)
 	resp, err := req.Do()
 	if err != nil {
-		return model.ExtGroupDetail{}, err
+		return model2.ExtGroupDetail{}, err
 	}
-	var rst []model.ExtGroupDetail
+	var rst []model2.ExtGroupDetail
 	err = resp.ParseData("data", &rst)
 	if err != nil {
-		return model.ExtGroupDetail{}, err
+		return model2.ExtGroupDetail{}, err
 	}
 	if len(rst) == 0 {
-		return model.ExtGroupDetail{}, errors.New("not found")
+		return model2.ExtGroupDetail{}, errors.New("not found")
 	}
 	return rst[0], nil
 }
 
-func (d GroupServ) GetLocalDetailNested(path string) (model.GroupNested, error) {
-	req := d.request(http.MethodGet, "v2/localUserGroup/queryGroupByPath")
+func (d GroupServ) GetLocalDetailNested(path string) (model2.GroupNested, error) {
+	req := d.request(http.MethodGet, "v1/localUserGroup/queryGroupByPath")
 	req.AddQuery("path", path)
 	resp, err := req.Do()
 	if err != nil {
-		return model.GroupNested{}, err
+		return model2.GroupNested{}, err
 	}
-	var r model.GroupNested
+	var r model2.GroupNested
 	err = resp.Parse(&r)
 	if err != nil {
-		return model.GroupNested{}, err
+		return model2.GroupNested{}, err
 	}
 	return r, nil
 }
 
-func (d GroupServ) GetLocalResource(arg model.CommonArg) (model.ResourceRelation, error) {
+func (d GroupServ) GetLocalResource(arg model2.CommonArg) (model2.ResourceRelation, error) {
 	return d.getResource(arg, "local")
 }
 
-func (d GroupServ) GetExtResource(arg model.CommonArg) (model.ResourceRelation, error) {
+func (d GroupServ) GetExtResource(arg model2.CommonArg) (model2.ResourceRelation, error) {
 	return d.getResource(arg, "external")
 }
 
 // getResource 根据用户ID或Name获取其被授权的应用和应用分类
 // 返回值分别为 1-组继承的应用、2-角色继承的应用、3-用户自己直接绑定的应用、4-fromResourceGallery
-func (d GroupServ) getResource(arg model.CommonArg, src string) (model.ResourceRelation, error) {
+func (d GroupServ) getResource(arg model2.CommonArg, src string) (model2.ResourceRelation, error) {
 	var (
-		res model.ResourceRelation
+		res model2.ResourceRelation
 	)
 	req := d.request(http.MethodPost, fmt.Sprintf("v2/%sUserGroup/queryRelatedResource", src))
 	req.SetBody(arg)
 	resp, err := req.Do()
 	if err != nil {
-		return model.ResourceRelation{}, err
+		return model2.ResourceRelation{}, err
 	}
-	var temp = map[string]map[string][]model.Resource{}
+	var temp = map[string]map[string][]model2.Resource{}
 	err = json.Unmarshal(resp, &temp)
 	if err != nil {
-		return model.ResourceRelation{}, err
+		return model2.ResourceRelation{}, err
 	}
 	for k, v := range temp {
 		switch k {
