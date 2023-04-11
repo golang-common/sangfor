@@ -133,7 +133,6 @@ func (r *request) Do(result any) error {
 		return err
 	}
 	bodyBytes = fixJson(bodyBytes)
-	fmt.Println(IndentJsonBytes(bodyBytes))
 	rdata := response{}
 	if result != nil {
 		rdata.Data = result
