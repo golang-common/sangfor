@@ -80,6 +80,7 @@ func (r *Request) Do() (RespData, error) {
 	client.Timeout = 20 * time.Second
 	client.Transport = tsp
 	// 发起请求
+	fmt.Println(IndentJsonBytes(r.Body))
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err

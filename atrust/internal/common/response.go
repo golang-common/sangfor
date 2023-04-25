@@ -13,11 +13,14 @@ type Response struct {
 }
 
 func (r Response) ErrorCheck() error {
-	if r.Code == 0 && r.Msg != "" {
+	if r.Code == 0 {
 		return nil
 	}
 	if r.Msg != "" {
 		return errors.New(fmt.Sprintf("code=%d,msg=%s", r.Code, r.Msg))
+	}
+	if len(r.Data) > 0 {
+		return errors.New(string(r.Data))
 	}
 	return errors.New("response check failed")
 }
