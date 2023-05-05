@@ -2,7 +2,7 @@ package test
 
 import (
 	"fmt"
-	"github.com/golang-common/sangfor/sangforatrust/model"
+	"github.com/golang-common/sangfor/atrust/model"
 	"testing"
 	"time"
 )

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/golang-common/sangfor/sangforatrust/internal/common"
-	model2 "github.com/golang-common/sangfor/sangforatrust/model"
+	"github.com/golang-common/sangfor/atrust/internal/common"
+	model2 "github.com/golang-common/sangfor/atrust/model"
 	"net/http"
 )
 

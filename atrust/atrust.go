@@ -1,6 +1,6 @@
-package sangforatrust
+package atrust
 
-import "github.com/golang-common/sangfor/sangforatrust/internal/service"
+import "github.com/golang-common/sangfor/atrust/internal/service"
 
 func NewAtrust(target, appid, secret string) *Atrust {
 	return &Atrust{
