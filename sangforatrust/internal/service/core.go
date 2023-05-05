@@ -2,7 +2,7 @@ package service
 
 import (
 	"fmt"
-	"github.com/golang-common/sangfor/atrust/internal/common"
+	"github.com/golang-common/sangfor/sangforatrust/internal/common"
 	uuid "github.com/satori/go.uuid"
 	"net/url"
 	"path"

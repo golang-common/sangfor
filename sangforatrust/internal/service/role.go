@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
-	"github.com/golang-common/sangfor/atrust/internal/common"
-	model2 "github.com/golang-common/sangfor/atrust/model"
+	"github.com/golang-common/sangfor/sangforatrust/internal/common"
+	model2 "github.com/golang-common/sangfor/sangforatrust/model"
 	"net/http"
 )
 

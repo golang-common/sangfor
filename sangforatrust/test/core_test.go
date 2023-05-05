@@ -2,12 +2,12 @@ package test
 
 import (
 	"encoding/json"
-	"github.com/golang-common/sangfor/atrust"
+	"github.com/golang-common/sangfor/sangforatrust"
 	"testing"
 	"time"
 )
 
-var AClient = atrust.NewAtrust("10.9.255.2:4433",
+var AClient = sangforatrust.NewAtrust("10.9.255.2:4433",
 	"1461600",
 	"6023d77f29144216bcac2496208872c8")
 

@@ -1,6 +1,6 @@
 // 数据结构
 
-package ac
+package sangforac
 
 import (
 	"encoding/json"
