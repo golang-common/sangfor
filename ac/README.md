@@ -28,6 +28,7 @@ func main() {
 	}
 	fmt.Println(ver)
 }
+
 ```
 
 正常时输出结果
