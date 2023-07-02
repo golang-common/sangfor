@@ -7,7 +7,7 @@ import (
 var ou = OnlineUser{
 	Name:       "dpytest2",
 	ShowName:   "戴澎源测试2",
-	FatherPath: "/兴盛优选",
+	FatherPath: `/兴盛优选/五区经营管委会/技术中心/供应链&运营支撑研发部`,
 	Ip:         "10.10.10.20",
 	Mac:        "ff-ff-ff-ff-ee-ff",
 }
