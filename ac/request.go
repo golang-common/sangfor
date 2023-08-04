@@ -31,7 +31,8 @@ type request struct {
 }
 
 func (r *request) SetRandom() *request {
-	random := rand.New(rand.NewSource(time.Now().Unix()))
+	// 这里必须用纳秒，用秒的话如果一秒内发起两次请求会报错
+	random := rand.New(rand.NewSource(time.Now().UnixNano()))
 	var (
 		md5Handler = md5.New()
 		rd         = fmt.Sprint(random.Uint64())
